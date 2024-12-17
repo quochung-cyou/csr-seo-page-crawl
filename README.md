@@ -23,8 +23,8 @@ This project implements a pre-crawling strategy that combines the best of both w
 
 ### React Site with Pre-Crawling
 
-![alt text](image-2.png)
-![alt text](image-3.png)
+![alt text](image-8.png)
+![alt text](image-7.png)
 
 
 ## Project Structure
