@@ -8,6 +8,10 @@ Building a blog platform with three key requirements:
 - Zero infrastructure costs (excluding domain)
 - SEO optimization
 
+## Detailed Architecture Implementation
+For a comprehensive understanding of the implementation and architecture, read the full blog post here: https://quochung.cyou/toi-uu-seo-website-csr-react-angular-bang-ki-thuat-precrawl/
+
+
 ## Solution
 This project implements a pre-crawling strategy that combines the best of both worlds:
 - CSR for regular users: Fast, dynamic content loading via API
@@ -77,6 +81,39 @@ project/
 
 ### Development
 
+
+#### Setup Supabase Storage for Pre-rendered HTML
+
+- Create a new project on Supabase
+
+- Create Storage bucket for storing pre-rendered HTML
+
+![alt text](image-2.png)
+ 
+- Public Bucket: To allow any source to access the bucket
+- Bucket Name: Name of the bucket
+- You can also setup the restrictions for the bucket
+
+#### Setup Cloudflare Worker Route
+
+- Check the cloudflare-worker/src/index.ts file
+- Edit config file cloudflare-worker/wrangler.toml
+- Edit config file cloudflare-worker/src/index.ts
+- Follow doc for deploy worker https://developers.cloudflare.com/workers/
+
+Config gonna need your domain name, supabase storage url, and supabase storage bucket name, supabase key for accessing the storage (Create)
+
+![alt text](image-9.png)
+![alt text](image-10.png)
+
+![alt text](image-3.png)
+
+- Add worker route for the domain, choose the worker you just deployed
+
+- You still may need a DNS Record for the domain you 
+want the worker to be applied to (It need to get proxied by Cloudflare - the orange cloud)
+
+
 #### Scrape Data Locally
 ```bash
 # Start local development for scraping data
@@ -93,6 +130,11 @@ npm run deploy
 # Run tests
 npm run test
 ```
+
+The scraper will crawl the website and store the pre-rendered HTML in Supabase Storage.
+
+![alt text](image-11.png)
+
 
 #### Deploy scrape using GitHub Actions
 
@@ -117,7 +159,11 @@ https://developers.cloudflare.com/workers/
 ```
 
 ## Limitations & Considerations
-- GitHub Actions free tier limit (2200 minutes/month)
+- GitHub Actions free tier limit (*2200 minutes/month*)
+- Supabase free tier storage limit (*1GB*)
+- Cloudflare free tier worker limit (*100,000 requests/day*)
+
+
 - Requires crawl strategy optimization based on content update frequency
 - Cache invalidation needs careful handling
 - Bot detection requires regular updates for new user agents
@@ -125,8 +171,7 @@ https://developers.cloudflare.com/workers/
 ## Future Improvements
 1. **Performance Optimization**
    - Response compression
-   - Stale-while-revalidate caching
-   - Smart cache invalidation
+   - Smart cache invalidation by getting the last modified date of the page
 
 2. **Monitoring & Logging**
    - Performance metrics collection
@@ -138,8 +183,6 @@ https://developers.cloudflare.com/workers/
    - Advanced bot detection
    - Automated cache warming
 
-## Detailed Implementation
-For a comprehensive understanding of the implementation and architecture, read the full blog post here: https://quochung.cyou/toi-uu-seo-website-csr-react-angular-bang-ki-thuat-precrawl/
 
 ## Tech Stack
 - Puppeteer for web crawling
